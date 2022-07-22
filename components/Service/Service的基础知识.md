@@ -182,7 +182,13 @@ android:permission="string" android:process="string">
 | android:enabled | 是否可以被系统实例化，默认为 true，因为父标签也有 enable 属性，所以必须两个都为默认值 true 的情况下才会被激活，否则不会激活。 |
 
 ## 6. IntentService
+
+IntentService是google在原生的Service基础上通过创建子线程的Service。也就是说IntentService是专门为android开发者提供的能在service内部实现耗时操作的service。我们可以通过重写onHandleIntent方法实现耗时操作的回调处理，而且IntentService在耗时操作完成后，会主动销毁自己，IntentService可以通过多次启动来完成多个任务，而IntentService只会被创建一次，每次启动的时候只会触发onStart方法。内部是实现了Handler异步处理耗时操作的过程，一般多用在Service中需要处理耗时操作的功能。
 　　服务不会自动开启线程，服务中的代码默认是运行在主线程中，如果直接在服务里执行一些耗时操作，容易造成 ANR(Application Not Responding)异常，为了可以简单的创建一个异步的、会自动停止的服务，Android 专门提供了一个 **IntentService** 类。可以启动 IntentService 多次，而每一个耗时操作会以工作队列的方式在 IntentService 的 onHandleIntent() 回调方法中执行，并且每次只会执行一个工作线程，执行完第一个，再执行第二个，以此类推。
+　　
+提问：为什么IntentService中能实现耗时操作?
+在onCreate中，通过HandlerThread来开启一条线程，而HandlerThread线程中会跟我们平常用的Handler不太一样，在run方法中创建了looper对象，所以HandlerThread能让IntentService在子线程中使用handler达到耗时操作。
+
 
 ## 7. 前台服务
 　　前台服务被认为是用户主动意识到的一种服务，因此在内存不足时，系统也不会考虑将其终止。前台服务必须为状态栏提供通知，状态栏位于 “ 正在进行 ” 标题下方，这意味着除非服务停止或从前台删除，否则不能清除通知。例如将从服务播放音乐的音乐播放器设置在前台运行，这是因为用户明确意识到其操作。状态栏中的通知可能表示正在播放的歌曲，并允许用户启动 Activity 来与音乐播放器进行交互。
