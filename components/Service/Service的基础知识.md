@@ -184,9 +184,10 @@ android:permission="string" android:process="string">
 ## 6. IntentService
 
 IntentService是google在原生的Service基础上通过创建子线程的Service。也就是说IntentService是专门为android开发者提供的能在service内部实现耗时操作的service。我们可以通过重写onHandleIntent方法实现耗时操作的回调处理，而且IntentService在耗时操作完成后，会主动销毁自己，IntentService可以通过多次启动来完成多个任务，而IntentService只会被创建一次，每次启动的时候只会触发onStart方法。内部是实现了Handler异步处理耗时操作的过程，一般多用在Service中需要处理耗时操作的功能。
+
 　　服务不会自动开启线程，服务中的代码默认是运行在主线程中，如果直接在服务里执行一些耗时操作，容易造成 ANR(Application Not Responding)异常，为了可以简单的创建一个异步的、会自动停止的服务，Android 专门提供了一个 **IntentService** 类。可以启动 IntentService 多次，而每一个耗时操作会以工作队列的方式在 IntentService 的 onHandleIntent() 回调方法中执行，并且每次只会执行一个工作线程，执行完第一个，再执行第二个，以此类推。
 　　
-提问：为什么IntentService中能实现耗时操作?
+    提问：为什么IntentService中能实现耗时操作?
 在onCreate中，通过HandlerThread来开启一条线程，而HandlerThread线程中会跟我们平常用的Handler不太一样，在run方法中创建了looper对象，所以HandlerThread能让IntentService在子线程中使用handler达到耗时操作。
 
 
